@@ -13,6 +13,9 @@ Basic Example
 
 	cat tea.txt | ./speedread -w 250
 
+	# Fullscreen mode — clears the terminal, centers the display
+	cat tea.txt | ./speedread -w 500 -f
+
 The default of 250 words per minute is very timid, designed so that you get
 used to this.  Be sure to try cranking this up, 500wpm should still be fairly
 easy to follow even for beginners.
@@ -30,6 +33,9 @@ speedread is slightly interactive, with these controls accepted:
   * [ - slow down by 10%
   * ] - speed up by 10%
   * space - pause (and show the last two lines of context)
+  * b - seek back 10 words
+  * B - seek back 30 words
+  * q - quit (shows stats and resume point)
 
 Integration Recipes
 -------------------
@@ -45,15 +51,11 @@ work with non-ASCII messages (probably due to mutt limitations).
 TODO
 ----
 
-Not sure if I will ever get around to these...
-
-  * Better word timing! Instead of just pausing longer at commas and
-    full-stops, distribute time better. Some short words like "not"
-    and "can" could often get missed the way things are now.
-  * Support for seeking back/forward.
+  * ~~Better word timing~~ — done: function words like "not", "can", "but" get extra time
+  * ~~Support for seeking back/forward~~ — done: `b`/`B` keys
+  * ~~More controls~~ — done: `q` to quit, `b`/`B` to seek back
+  * ~~Make timing coefficients configurable~~ — done: `--wordtime`, `--commatime`, `--fstoptime`, `--lentime`, `--firsttime`
   * Automatically adjust wpm on trained content difficulty (look-ahead)?
-  * More controls, explore how can interactivity enhance usefulness of this.
-  * Make various timing and ORP coefficients configurable.
   * Add a (Cairo-based?) simplistic graphical frontend (keeping with the
     filter philosophy). This would allow better eye guidance and large font.
   * An elinks-based recipe for reading websites this way.
