@@ -1,0 +1,20 @@
+#compdef speedread
+
+_speedread() {
+    local -a opts
+
+    _arguments -s \
+        '(-w --wpm)'{-w,--wpm}'[words per minute]:wpm (default\: 250)' \
+        '(-r --resume)'{-r,--resume}'[resume from word N]:word number' \
+        '(-m --multiword)'{-m,--multiword}'[join adjacent short words]' \
+        '(-f --fullscreen)'{-f,--fullscreen}'[clear terminal and center display]' \
+        '(-h --help)'{-h,--help}'[show help]' \
+        '--wordtime[base time per word (default\: 0.9)]:float' \
+        '--lentime[extra time per sqrt(chars) (default\: 0.04)]:float' \
+        '--commatime[pause multiplier for commas (default\: 2)]:float' \
+        '--fstoptime[pause multiplier for sentence end (default\: 3)]:float' \
+        '--firsttime[min time for first word in seconds (default\: 0.2)]:float' \
+        '*:input file:_files'
+}
+
+_speedread "$@"

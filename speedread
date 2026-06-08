@@ -51,6 +51,7 @@ use POSIX qw(floor);
 use Time::HiRes qw(time sleep gettimeofday tv_interval);
 
 use Getopt::Long;
+my $help = 0;
 GetOptions(
     "wpm|w=i"        => \$wpm,
     "resume|r=i"     => \$resume,
@@ -61,7 +62,41 @@ GetOptions(
     "commatime=f"    => \$commatime,
     "fstoptime=f"    => \$fstoptime,
     "firsttime=f"    => \$firsttime,
+    "help|h"         => \$help,
 );
+
+if ($help) {
+    print <<'END';
+speedread - terminal RSVP speed reader
+
+Usage: speedread [OPTIONS] [FILE...]
+       cat file.txt | speedread [OPTIONS]
+
+Options:
+  -w, --wpm N          Words per minute (default: 250)
+  -r, --resume N       Resume from word number N
+  -m, --multiword      Join adjacent short words together
+  -f, --fullscreen     Clear terminal and center display
+  -h, --help           Show this help
+
+Timing coefficients (all relative to wpm):
+      --wordtime N     Base time per word (default: 0.9)
+      --lentime N      Extra time per sqrt(chars) (default: 0.04)
+      --commatime N    Multiplier for comma/semicolon (default: 2)
+      --fstoptime N    Multiplier for sentence end (default: 3)
+      --firsttime N    Minimum time for first word in seconds (default: 0.2)
+
+Controls during playback:
+  [          Slow down 10%
+  ]          Speed up 10%
+  space      Pause / unpause (shows context)
+  b          Seek back 10 words
+  B          Seek back 30 words
+  q          Quit (shows stats and resume point)
+  Ctrl-C     Quit (shows stats and resume point)
+END
+    exit 0;
+}
 
 my $paused          = 0;
 my $current_word    = '';
@@ -89,12 +124,14 @@ my %emphasis_words = map { $_ => 1 } qw(
 );
 
 sub get_term_size {
+    # stty may fail when stdin is a pipe; suppress autodie on close
     if (open(my $fh, '-|', 'stty size 2>/dev/null')) {
         my $size = <$fh>;
-        close($fh);
+        eval { close($fh) };
         return ($1, $2) if $size && $size =~ /^(\d+)\s+(\d+)/;
     }
-    return (24, 80);
+    # Fall back to environment variables set by the terminal
+    return ($ENV{LINES} // 24, $ENV{COLUMNS} // 80);
 }
 
 sub move_to {

@@ -25,6 +25,17 @@ easy to follow even for beginners.
 ![750wpm example](doc/speedread-750.gif)
 ![1000wpm example](doc/speedread-1000.gif)
 
+Shell Completion
+----------------
+
+For zsh completion, copy `_speedread` to a directory on your `$fpath` and run `compinit`:
+
+	cp _speedread ~/.zsh/completions/   # or wherever your fpath points
+	echo 'fpath=(~/.zsh/completions $fpath)' >> ~/.zshrc
+	echo 'autoload -U compinit && compinit' >> ~/.zshrc  # if not already set
+
+Or run `speedread -h` / `speedread --help` for full usage.
+
 Controls
 --------
 
